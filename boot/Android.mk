@@ -1,4 +1,4 @@
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2007 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,5 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+LOCAL_PATH:= $(call my-dir)
 
-include $(call all-named-subdir-makefiles, boot libsensors)
+ifneq ($(TARGET_SIMULATOR),true)
+
+include $(CLEAR_VARS)
+
+LOCAL_ARM_MODE := arm
+
+LOCAL_SRC_FILES := board.c panel.c keypad.c usb.c
+
+LOCAL_C_INCLUDES := $(call include-path-for, bootloader)
+
+LOCAL_CFLAGS := -O2 -g -W -Wall
+LOCAL_CFLAGS += -march=armv6
+
+LOCAL_MODULE := libboot_board_dream_sapphire
+
+include $(BUILD_RAW_STATIC_LIBRARY)
+
+endif # !TARGET_SIMULATOR
+
