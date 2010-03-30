@@ -68,21 +68,21 @@ struct sensors_data_context_t {
 
 static const struct sensor_t sSensorList[] = {
         { "AK8976A 3-axis Accelerometer",
-                "The Android Open Source Project",
+                "Asahi Kasei",
                 1, SENSORS_HANDLE_BASE+ID_A,
-                SENSOR_TYPE_ACCELEROMETER, 2.8f, 1.0f/4032.0f, 3.0f, { } },
+                SENSOR_TYPE_ACCELEROMETER, 2.8f*9.81f, 9.81f/45.0f, 3.0f, { } },
         { "AK8976A 3-axis Magnetic field sensor",
-                "The Android Open Source Project",
+                "Asahi Kasei",
                 1, SENSORS_HANDLE_BASE+ID_M,
                 SENSOR_TYPE_MAGNETIC_FIELD, 2000.0f, 1.0f, 6.7f, { } },
         { "AK8976A Orientation sensor",
-                "The Android Open Source Project",
+                "Asahi Kasei",
                 1, SENSORS_HANDLE_BASE+ID_O,
                 SENSOR_TYPE_ORIENTATION, 360.0f, 1.0f, 9.7f, { } },
         { "AK8976A Temperature sensor",
-                "The Android Open Source Project",
+                "Asahi Kasei",
                 1, SENSORS_HANDLE_BASE+ID_T,
-                SENSOR_TYPE_TEMPERATURE, 80.0f, 1.0f, 0.0f, { } },
+                SENSOR_TYPE_TEMPERATURE, 115.0f, 1.6f, 3.0f, { } },
 };
 
 static int open_sensors(const struct hw_module_t* module, const char* name,
