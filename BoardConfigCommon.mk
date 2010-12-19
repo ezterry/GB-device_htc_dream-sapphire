@@ -60,6 +60,9 @@ BOARD_FLASH_BLOCK_SIZE := 131072
 # OpenGL drivers config file path
 BOARD_EGL_CFG := device/htc/dream-sapphire/egl.cfg
 
+#Enable Cyanogen Bionic for use in busybox only
+CYANOGEN_BIONIC := true
+
 # No fallback font by default (space savings)
 NO_FALLBACK_FONT:=true
 
