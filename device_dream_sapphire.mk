@@ -57,8 +57,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_COPY_FILES += \
     device/htc/dream-sapphire/media_profiles.xml:/system/etc/media_profiles.xml
 
-#allow root over adb
-ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
 
 # proprietary side of the device
 $(call inherit-product-if-exists, vendor/htc/dream-sapphire/device_dream_sapphire-vendor.mk)
