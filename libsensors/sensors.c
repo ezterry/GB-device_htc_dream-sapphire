@@ -36,12 +36,10 @@ static const struct sensor_t sSensorList[] = {
 		"Asahi Kasei",
 		1, SENSORS_HANDLE_BASE+ID_O,
 		SENSOR_TYPE_ORIENTATION, 360.0f, 1.0f, 9.7f, 0, { } },
-/*
 	{ "AK8976A Temperature sensor",
 		"Asahi Kasei",
 		1, SENSORS_HANDLE_BASE+ID_T,
 		SENSOR_TYPE_TEMPERATURE, 115.0f, 1.6f, 3.0f, 0, { } },
- */
 };
 
 static int open_sensors(const struct hw_module_t* module, const char* name,
