@@ -64,5 +64,8 @@
 
     <!-- Boolean indicating if we require the use of DUN on mobile for tethering -->
     <bool translatable="false" name="config_tether_dun_required">false</bool>
+    
+    <!-- If true: Enables SIP on WIFI only -->
+    <bool name="config_sip_wifi_only">false</bool>
 
 </resources>
