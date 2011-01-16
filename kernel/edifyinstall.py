@@ -40,6 +40,13 @@ import os.path
 import tempfile
 import shutil
 
+
+def IsSymlink(info):
+    """Return true if the zipfile.ZipInfo object passed in represents a
+       symlink."""
+    # as defined in build/tools/releasetools/ota_from_target_files
+    return (info.external_attr >> 16) == 0120777
+
 def unzip_boot_files(input_zip,output_path):
     files=filter(lambda f: f[:4]=='BOOT',input_zip.namelist())
     for f in files:
@@ -51,9 +58,14 @@ def unzip_boot_files(input_zip,output_path):
             os.makedirs(outdir)
         #extract the file
         if(os.path.basename(outfile) != ""):
-            fp=open(outfile,'wb')
-            fp.write(input_zip.read(f))
-            fp.close()
+            if(IsSymlink(input_zip.getinfo(f))):
+                #we have a symlink
+                os.symlink(input_zip.read(f),outfile)
+            else:
+                #just create the output file
+                fp=open(outfile,'wb')
+                fp.write(input_zip.read(f))
+                fp.close()
 
 def generate_checksys(output_zip):
     checksys  = \
