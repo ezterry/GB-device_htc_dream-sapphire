@@ -115,7 +115,7 @@ def make_boot_install(script,boot_img,input_zip,output_zip):
                        common.BuildBootableImage(
                          os.path.join(temp_root,"ebi1_BOOT")))
     
-    common.ZipWriteStr(output_zip,"kernel/ebi0-boot.img",ebi1_boot_img.data)
+    common.ZipWriteStr(output_zip,"kernel/ebi1-boot.img",ebi1_boot_img.data)
     
     #copy in modules.sqf
     fp=open(os.path.join(android_root,
