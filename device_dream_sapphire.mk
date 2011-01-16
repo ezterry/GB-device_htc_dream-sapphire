@@ -27,7 +27,11 @@ PRODUCT_COPY_FILES := \
     frameworks/base/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
     frameworks/base/data/etc/android.software.sip.xml:system/etc/permissions/android.software.sip.xml
 
-PRODUCT_PROPERTY_OVERRIDES := \
+#copy default modules.
+PRODUCT_COPY_FILES += \
+    device/htc/dream-sapphire/kernel/2708-modules.sqf:system/lib/modules/modules.sqf
+
+PRODUCT_PROPERTY_OVERRIDES += \
     ro.media.dec.jpeg.memcap=10000000
 
 PRODUCT_PROPERTY_OVERRIDES += \
