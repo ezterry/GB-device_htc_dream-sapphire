@@ -35,7 +35,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     device/htc/dream-sapphire/prebuilt/etc/init.d/04modules:system/etc/init.d/04modules
 
-#Copy audio proviles
+#Copy audio profiles
 PRODUCT_COPY_FILES += \
     device/htc/dream-sapphire/prebuilt/etc/.audio/AudioPara_TMUS_DREA.csv.gz:system/etc/.audio/AudioPara_TMUS_DREA.csv.gz \
     device/htc/dream-sapphire/prebuilt/etc/.audio/AudioPara_TMUS_SAPP.csv.gz:system/etc/.audio/AudioPara_TMUS_SAPP.csv.gz \
@@ -73,6 +73,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_COPY_FILES += \
     device/htc/dream-sapphire/media_profiles.xml:/system/etc/media_profiles.xml
 
+#System module location (for busybox modprobe)
+KERNEL_MODULES_DIR=/system/lib/modules
 
 # proprietary side of the device
 $(call inherit-product-if-exists, vendor/htc/dream-sapphire/device_dream_sapphire-vendor.mk)
