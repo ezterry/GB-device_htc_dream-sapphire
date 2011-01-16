@@ -198,7 +198,7 @@ then
     #we have a HTC Dream
     ui_print("system/etc/.audio/AudioPara_TMUS_DREA.csv.gz");
     run_program("/sbin/sh","-c",
-           concat("busybox gzip < ",
+           concat("busybox gzip -dc ",
                   "/system/etc/.audio/AudioPara_TMUS_DREA.csv.gz > ",
                   "/system/etc/AudioPara4.csv"));
 else
@@ -208,14 +208,14 @@ else
         #this is a 32B board
         ui_print("system/etc/.audio/AudioPara_TMUS_SAPP.csv.gz");
         run_program("/sbin/sh","-c",
-               concat("busybox gzip < ",
+               concat("busybox gzip -dc ",
                       "/system/etc/.audio/AudioPara_TMUS_SAPP.csv.gz > ",
                       "/system/etc/AudioPara4.csv"));
     else
         #this is a 32A baord
         ui_print("system/etc/.audio/AudioPara_VODA_SAPP.csv.gz");
         run_program("/sbin/sh","-c",
-               concat("busybox gzip < ",
+               concat("busybox gzip -dc ",
                       "/system/etc/.audio/AudioPara_VODA_SAPP.csv.gz > ",
                       "/system/etc/AudioPara4.csv"));
     endif;
