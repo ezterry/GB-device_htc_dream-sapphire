@@ -67,6 +67,7 @@ bootloader=`awk '{m=match($0,/androidboot.bootloader=([0-9a-zA-Z\.]*)/) ; print(
 radioseries=`echo $baseband | awk '{print(substr($0,0,4))}'`
 custommtd=`awk '/mtdparts/ {print("CustomMTD")}' < /proc/cmdline`
 smisize=`awk '{m=match($0,/smisize=([0-9a-zA-Z\.]*)/) ; print(substr($0,RSTART+8,RLENGTH-8))}' < /proc/cmdline`
+board=`cat /proc/cpuinfo  | grep Hardware | awk '{print $3}'`
 
 #write out a prop file for the updater script to read
 echo "baseband=$baseband" > /tmp/nfo.prop
@@ -74,6 +75,7 @@ echo "bootloader=$bootloader" >> /tmp/nfo.prop
 echo "radioseries=$radioseries" >> /tmp/nfo.prop
 echo "custommtd=$custommtd" >> /tmp/nfo.prop
 echo "smisize=$smisize" >> /tmp/nfo.prop
+echo "sysboard=$board" >> /tmp/nfo.prop
 """
     common.ZipWriteStr(output_zip,"checksys.sh",checksys)
 
@@ -184,9 +186,46 @@ endif;
 ## TODO ADD AUTO CUSTOM-MTD logic to /tmp/boot.img here ##
 ui_print("Write boot.img");
 assert(write_raw_image("/tmp/boot.img","boot"));
-delete("/tmp/checksys.sh","/tmp/nfo.prop","/tmp/boot.img");
+delete("/tmp/checksys.sh","/tmp/boot.img");
 
 #END INSTALL boot.img
+
+#Install "Audio hack"
+
+ui_print("AudioPara4.csv setup:");
+if file_getprop("/tmp/nfo.prop","sysboard") == "trout"
+then
+    #we have a HTC Dream
+    ui_print("system/etc/.audio/AudioPara_TMUS_DREA.csv.gz");
+    run_program("/sbin/sh","-c",
+           concat("busybox gzip < ",
+                  "/system/etc/.audio/AudioPara_TMUS_DREA.csv.gz > ",
+                  "/system/etc/AudioPara4.csv"));
+else
+    #We have one brand or other of HTC Sapphire
+    if file_getprop("/tmp/nfo.prop","smisize") == "64"
+    then
+        #this is a 32B board
+        ui_print("system/etc/.audio/AudioPara_TMUS_SAPP.csv.gz");
+        run_program("/sbin/sh","-c",
+               concat("busybox gzip < ",
+                      "/system/etc/.audio/AudioPara_TMUS_SAPP.csv.gz > ",
+                      "/system/etc/AudioPara4.csv"));
+    else
+        #this is a 32A baord
+        ui_print("system/etc/.audio/AudioPara_VODA_SAPP.csv.gz");
+        run_program("/sbin/sh","-c",
+               concat("busybox gzip < ",
+                      "/system/etc/.audio/AudioPara_VODA_SAPP.csv.gz > ",
+                      "/system/etc/AudioPara4.csv"));
+    endif;
+endif;
+#Ensure we sync.. I've seen files flashed at the end of a edify script like
+#this vanish
+run_program("/sbin/sh","-c","sleep 2; sync");
+
+#now update permissions on the new file and we are done
+set_perm(0, 0, 0644, "/system/etc/AudioPara4.csv");
 
 """)
     #clean up temporary files

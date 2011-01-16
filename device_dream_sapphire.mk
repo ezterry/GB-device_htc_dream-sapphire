@@ -35,6 +35,12 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     device/htc/dream-sapphire/prebuilt/etc/init.d/04modules:system/etc/init.d/04modules
 
+#Copy audio proviles
+PRODUCT_COPY_FILES += \
+    device/htc/dream-sapphire/prebuilt/etc/.audio/AudioPara_TMUS_DREA.csv.gz:system/etc/.audio/AudioPara_TMUS_DREA.csv.gz \
+    device/htc/dream-sapphire/prebuilt/etc/.audio/AudioPara_TMUS_SAPP.csv.gz:system/etc/.audio/AudioPara_TMUS_SAPP.csv.gz \
+    device/htc/dream-sapphire/prebuilt/etc/.audio/AudioPara_VODA_SAPP.csv.gz:system/etc/.audio/AudioPara_VODA_SAPP.csv.gz
+
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.media.dec.jpeg.memcap=10000000
 
