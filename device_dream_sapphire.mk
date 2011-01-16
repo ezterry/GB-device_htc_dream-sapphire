@@ -31,6 +31,10 @@ PRODUCT_COPY_FILES := \
 PRODUCT_COPY_FILES += \
     device/htc/dream-sapphire/kernel/2708-modules.sqf:system/lib/modules/modules.sqf
 
+#Copy init.d scripts
+PRODUCT_COPY_FILES += \
+    device/htc/dream-sapphire/prebuilt/etc/init.d/04modules:system/etc/init.d/04modules
+
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.media.dec.jpeg.memcap=10000000
 
