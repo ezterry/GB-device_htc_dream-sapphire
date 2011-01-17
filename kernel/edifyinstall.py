@@ -183,7 +183,7 @@ else
         # 1.33.2005...
         if file_getprop("/tmp/nfo.prop","bootloader") == "1.33.2013"
         then
-            ui_print("1.33.2003 detected, please ensure this is not Crios SPL 1.33.2013 ENG");
+            ui_print("1.33.2013 detected, please ensure this is not Crios SPL 1.33.2013 ENG; as its really 1.33.2005");
         endif;
         ui_print("Extracting 2708+ patch");
         package_extract_file("kernel/2708-boot.img","/tmp/boot.img");
