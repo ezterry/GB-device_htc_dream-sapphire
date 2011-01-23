@@ -76,7 +76,8 @@ PRODUCT_COPY_FILES += \
 #System module location (for busybox modprobe)
 KERNEL_MODULES_DIR=/system/lib/modules
 
-#
+#Use v8 Javascript engine
+JS_ENGINE := v8
 
 # proprietary side of the device
 $(call inherit-product-if-exists, vendor/htc/dream-sapphire/device_dream_sapphire-vendor.mk)
