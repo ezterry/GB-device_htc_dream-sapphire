@@ -41,6 +41,10 @@ PRODUCT_COPY_FILES += \
     device/htc/dream-sapphire/prebuilt/etc/.audio/AudioPara_TMUS_SAPP.csv.gz:system/etc/.audio/AudioPara_TMUS_SAPP.csv.gz \
     device/htc/dream-sapphire/prebuilt/etc/.audio/AudioPara_VODA_SAPP.csv.gz:system/etc/.audio/AudioPara_VODA_SAPP.csv.gz
 
+#Copy prebuilt files
+PRODUCT_COPY_FILES += \
+    device/htc/dream-sapphire/prebuilt/bin/fix_permissions:system/bin/fix_permissions
+
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.media.dec.jpeg.memcap=10000000
 
@@ -68,6 +72,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # This is a 16.16 fixed point number
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.opengles.version=65537
+
+# Build ID for protected market apps
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.build.description=soju-user 2.3.1 GRH78 85442 release-keys \
+    ro.build.fingerprint=google/soju/crespo:2.3.1/GRH78/85442:user/release-keys
 
 # media configuration xml file
 PRODUCT_COPY_FILES += \
