@@ -75,7 +75,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Build ID for protected market apps
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.build.description=soju-user 2.3.1 GRH78 85442 release-keys \
     ro.build.fingerprint=google/soju/crespo:2.3.1/GRH78/85442:user/release-keys
 
 # media configuration xml file
