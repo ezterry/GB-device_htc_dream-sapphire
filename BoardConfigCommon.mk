@@ -72,6 +72,9 @@ TINY_TOOLBOX := true
 #Busybox sh is perfered over toolbox
 SKIP_SH_BUILD_USE_BB := true
 
+#libsurfaceflinger to avoid Draw Texture Extenstion
+AVOID_DRAW_TEXTURE_EXTENSION := true
+
 TARGET_RECOVERY_UPDATER_LIBS += librecovery_updater_htc
 
 TARGET_RELEASETOOLS_EXTENSIONS := device/htc/common
