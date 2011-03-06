@@ -1,0 +1,7 @@
+# Trout overlay for Sapphire builds
+
+ro.product.model=Gingerbread on Dream
+ro.product.name=kila
+ro.product.device=dream
+ro.product.board=trout
+ro.build.product=dream
