@@ -90,6 +90,7 @@ JS_ENGINE := v8
 
 #use armv6j code
 TARGET_ARCH_VARIANT := armv6j
+TARGET_DVM_ARCH_VARIANT := armv5te
 
 # proprietary side of the device
 $(call inherit-product-if-exists, vendor/htc/dream-sapphire/device_dream_sapphire-vendor.mk)
