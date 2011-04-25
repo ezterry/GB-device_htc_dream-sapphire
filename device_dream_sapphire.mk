@@ -33,7 +33,8 @@ PRODUCT_COPY_FILES += \
 
 #Copy init.d scripts
 PRODUCT_COPY_FILES += \
-    device/htc/dream-sapphire/prebuilt/etc/init.d/04modules:system/etc/init.d/04modules
+    device/htc/dream-sapphire/prebuilt/etc/init.d/04modules:system/etc/init.d/04modules \
+    device/htc/dream-sapphire/prebuilt/etc/init.d/12zram_compcahce:system/etc/init.d/12zram_compcahce
 
 #Copy audio profiles
 PRODUCT_COPY_FILES += \

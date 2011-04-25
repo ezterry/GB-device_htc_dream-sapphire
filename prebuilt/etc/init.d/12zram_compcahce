@@ -1,0 +1,63 @@
+#!/system/bin/sh
+#
+# zram compcache init
+
+LOGINFO='log -p i -t zram '
+LOGWARN='log -p w -t zram '
+
+zsize=`getprop persist.zram.size unknown`
+
+if [[ -e /data/property/persist.zram.size ]]
+then
+    zsize=`cat  /data/property/persist.zram.size`
+fi
+
+if [ "$zsize" == "unknown" ]
+then
+    $LOGWARN "persist.zram.size not set: use default"
+    #if we are 32b force status to enabled
+    #else 32a users stay disabled
+    smisize=`awk '{m=match($0,/smisize=([0-9a-zA-Z\.]*)/) ; print(substr($0,RSTART+8,RLENGTH-8))}' < /proc/cmdline`
+    if [ "$smisize" == "64" ]
+    then
+        setprop persist.zram.size   18
+        zsize=18
+        $LOGINFO Compcache enabled by default on 32b device
+    else
+        setprop persist.zram.size   0
+        zsize=0
+        $LOGINFO Compcache disabled by default on 32a device
+    fi
+else
+    $LOGINFO "persist.zram.size set to $zsize Mb"
+fi
+
+#now see if the kernel supports zswap
+if [[ -e /sys/block/zram0/disksize ]]
+then
+    $LOGINFO "zram module built into kernel and/or loaded"
+    setprop status.zram.device.exists 1
+else
+    setprop status.zram.device.exists 0
+    $LOGWARN "zram module not built into kernel, exiting"
+    exit 0 
+fi
+
+if [ "$zsize" == "0" ]
+then
+    #comp cache is disabled
+    $LOGINFO "zsize is zero, compcache disabled"
+    exit 0
+fi
+
+#now setup compcache
+echo 1 > /proc/sys/vm/drop_caches
+echo 25 > /proc/sys/vm/swappiness
+echo 1 > /sys/block/zram0/reset
+echo $(($zsize * 1024 * 1024)) > /sys/block/zram0/disksize
+
+mkswap /dev/block/zram0
+swapon /dev/block/zram0
+$LOGINFO "compcache enabled via zram"
+
+exit 0
