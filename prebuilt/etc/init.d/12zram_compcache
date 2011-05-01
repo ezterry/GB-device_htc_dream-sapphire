@@ -40,7 +40,7 @@ then
 else
     setprop status.zram.device.exists 0
     $LOGWARN "zram module not built into kernel, exiting"
-    exit 0 
+    exit 0
 fi
 
 if [ "$zsize" == "0" ]
