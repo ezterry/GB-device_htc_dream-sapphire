@@ -75,6 +75,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.opengles.version=65537
 
+# Set the vm heapsize to 18MB
+PRODUCT_PROPERTY_OVERRIDES += \
+    dalvik.vm.heapsize=18m
+
 # Build ID for protected market apps
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.build.fingerprint=google/soju/crespo:2.3.1/GRH78/85442:user/release-keys
