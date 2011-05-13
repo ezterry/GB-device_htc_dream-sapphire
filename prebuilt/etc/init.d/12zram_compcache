@@ -50,9 +50,12 @@ then
     exit 0
 fi
 
-#now setup compcache
+#prepare vm subsystem
 echo 1 > /proc/sys/vm/drop_caches
 echo 25 > /proc/sys/vm/swappiness
+echo 1 > /proc/sys/vm/page-cluster
+
+#setup compcache
 echo 1 > /sys/block/zram0/reset
 echo $(($zsize * 1024 * 1024)) > /sys/block/zram0/disksize
 
