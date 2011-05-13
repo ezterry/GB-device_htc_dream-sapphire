@@ -79,6 +79,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.heapsize=18m
 
+#Set purgeable assets to save ram on low mem devices
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.sys.purgeable_assets=1
+
 # Build ID for protected market apps
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.build.fingerprint=google/soju/crespo:2.3.1/GRH78/85442:user/release-keys
