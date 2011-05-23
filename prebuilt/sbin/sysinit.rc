@@ -14,3 +14,6 @@ df -h /cache | tail -n 1 | awk '
 
 #runparts:
 /system/bin/logwrapper /system/xbin/run-parts /system/etc/init.d
+
+#cleanup cache of extra *.apk downloads
+rm -rf /cache/downloadfile*.apk
