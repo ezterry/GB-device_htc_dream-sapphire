@@ -1,3 +1,16 @@
 #!/system/bin/sh
 export PATH=/sbin:/data/local/bin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
+
+# check size of /cache for dexfiles (if 28MB+27MB free move dexcache):
+df -h /cache | tail -n 1 | awk '
+{
+  m=match($0,/([0-9]+\.[0-9])/);
+  if(substr($0,RSTART,RLENGTH-2) - 27 >28){
+    system("setprop dalvik.vm.dexopt-data-only 0");
+  }else{
+    system("setprop dalvik.vm.dexopt-data-only 1");
+  }
+}'
+
+#runparts:
 /system/bin/logwrapper /system/xbin/run-parts /system/etc/init.d
