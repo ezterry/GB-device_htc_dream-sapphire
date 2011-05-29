@@ -1,0 +1,99 @@
+#!/system/bin/sh
+#
+# mount ext[234] partition from sd card
+
+BB="logwrapper busybox";
+
+domount=0
+if [[ -e /data/property/persist.sys.magpie.allow ]];
+then
+    domount=`cat /data/property/persist.sys.magpie.allow`
+fi;
+
+if [ "$SD_EXT_DIRECTORY" = "" ];
+then
+    SD_EXT_DIRECTORY=/sd-ext;
+fi;
+
+if [ "$domount" == "0" ];
+then
+    log -p i -t mountsd "User has not enabled magpie a2sd mounting.. skipping"
+    exit 0
+fi;
+
+# find first linux partition on SD card
+for mmcblk in 0;do
+MMC=/dev/block/mmcblk${mmcblk}
+
+# wait for the device to settle
+COUNT=6;
+until [ -b "$MMC" ] || [ $COUNT -lt 1 ];
+do
+    sleep 1;
+    COUNT=$((COUNT-1));
+done;
+
+    # if no mmcblkx try to fudge it
+    if [ ! -b "$MMC" ];
+    then
+        base_minor=$(expr 8 \* $mmcblk)
+        mknod ${MMC} b 179 $base_minor
+        chmod 600 ${MMC}
+        for minor in 1 2 3;do
+            if [ ! -b "${MMC}p${minor}" ];
+            then
+                mknod ${MMC}p${minor} b 179 $(expr $base_minor \+ $minor)
+                chmod 600 ${MMC}p${minor}
+            fi
+        done
+    fi
+
+    if [ -b "$MMC" ];
+    then
+        FDISK="busybox fdisk"
+        PARTITION=`$FDISK -l $MMC | awk '/^\// && $5 == 83 {print $1;exit;}'`
+
+        if [ -b "$PARTITION" ];
+        then
+            log -p i -t mountsd "$PARTITION = linux partition"
+	        break
+        fi
+    fi
+done
+if [ "$PARTITION" = "" ];
+then
+    log -p i -t mountsd "valid linux partition not found"
+    exit
+fi
+log -p i -t mountsd "Checking filesystems..";
+
+# fsck the sdcard filesystem first
+if [ "`which e2fsck`" != "" -a -x "`which e2fsck`" ];
+then
+    e2fsck -y $PARTITION;e2fsck_exitcode=$?
+else
+    echo "executable e2fsck not found, assuming no filesystem errors"
+    e2fsck_exitcode=0
+fi
+# set property with exit code in case an error occurs
+setprop cm.e2fsck.errors $e2fsck_exitcode;
+if [ "$e2fsck_exitcode" -lt 2 ];
+then
+    # mount and set perms
+    $BB mount -o noatime,nodiratime -t auto $PARTITION $SD_EXT_DIRECTORY;
+    if [ "$?" = 0 ];
+    then
+        $BB chown 1000:1000 $SD_EXT_DIRECTORY;
+        $BB chmod 771 $SD_EXT_DIRECTORY;
+        log -p i -t mountsd "$SD_EXT_DIRECTORY successfully mounted";
+    else
+        log -p e -t mountsd "Unable to mount filesystem for $SD_EXT_DIRECTORY!";
+    fi
+else
+    if [ "$e2fsck_exitcode" = 2 ];
+    then
+        log -p e -t mountsd "filesystem repaired - reboot requied, disabling apps2sd";
+	else
+        log -p e -t mountsd "Unable to repair filesystem, disabling apps2sd";
+    fi
+fi
