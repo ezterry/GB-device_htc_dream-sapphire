@@ -1,10 +1,19 @@
 #!/system/bin/sh
 # Make sure the Apps2SD structure exists.
 
+LOG="log -p i -t a2sd "
+
 if [ "$SD_EXT_DIRECTORY" = "" ];
 then
     SD_EXT_DIRECTORY=/sd-ext
 fi
+
+if [[ -e /data/property/persist.sys.magpie.data2sd ]]
+then
+    data2sd=`cat /data/property/persist.sys.magpie.data2sd`
+else
+    data2sd=0
+fi;
 
 if ! awk -vDIR="$SD_EXT_DIRECTORY" '$2 == DIR { exit 1; }' /proc/mounts ;
 then
@@ -15,9 +24,54 @@ then
             mkdir $SD_EXT_DIRECTORY/$i
             busybox chown 1000:1000 $SD_EXT_DIRECTORY/$i
             busybox chmod 771 $SD_EXT_DIRECTORY/$i
-            log -p i -t a2sd "$SD_EXT_DIRECTORY/$i created"
+            $LOG "$SD_EXT_DIRECTORY/$i created"
         fi
     done
     setprop magpie.a2sd.active 1
-    log -p i -t a2sd "Apps2SD successfully activated"
+    $LOG "Apps2SD successfully activated"
+
+    #see if we need to make a data bind
+    if [ "$data2sd" == "1" ]
+    then
+        if [ -e /data/data/.sdcard ]
+        then
+            $LOG "Data2SD already copied to SDCard"
+        else
+            $LOG "Copying data to SDCard"
+            if [ -d /sd-ext/app-data ]
+            then
+                logwrapper busybox cp -af /data/data/* /sd-ext/app-data/
+            else
+                logwrapper busybox cp -af /data/data /sd-ext/app-data
+            fi
+        fi
+        logwrapper busybox rm -rf /data/data
+        mkdir /data/data
+        logwrapper busybox chown system:system /data/data
+        logwrapper busybox chmod 771 /data/data
+        logwrapper busybox touch /data/data/.sdcard
+        if [ -d /sd-ext/app-data ]
+        then
+            $LOG "/sd-ext/app-data exists"
+        else
+            $LOG "creating /sd-ext/app-data"
+            mkdir /sd-ext/app-data
+        fi
+        logwrapper busybox chown system:system /sd-ext/app-data
+        logwrapper busybox chmod 771 /sd-ext/app-data
+
+        $LOG "make data bind mount"
+        logwrapper busybox mount -o bind /sd-ext/app-data /data/data
+    else
+        if [ -e /data/data/.sdcard ]
+        then
+            $LOG "Move back to data"
+            if [ -d /sd-ext/app-data ]
+            then
+                logwrapper busybox cp -af /sd-ext/app-data/* /data/data/
+                logwrapper busybox rm -rf /sd-ext/app-data
+            fi
+            rm /data/data/.sdcard
+        fi
+    fi
 fi
