@@ -38,6 +38,11 @@ ALL_PREBUILT += $(file)
 $(file) : $(LOCAL_PATH)/prebuilt/sbin/sysinit.rc | $(ACP)
 	$(transform-prebuilt-to-target)
 
+file := $(TARGET_ROOT_OUT)/ueventd.ds.rc
+ALL_PREBUILT += $(file)
+$(file) : $(LOCAL_PATH)/prebuilt/ueventd.ds.rc | $(ACP)
+	$(transform-prebuilt-to-target)
+
 include $(CLEAR_VARS)
 LOCAL_MODULE_CLASS := ETC
 LOCAL_MODULE := vold.fstab
