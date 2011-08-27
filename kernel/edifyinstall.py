@@ -146,6 +146,15 @@ def make_boot_install(script,boot_img,input_zip,output_zip):
 
     #add in checksys.sh
     generate_checksys(output_zip)
+
+    #add in bootcmdutil
+    #out/target/product/sapphire/obj/EXECUTABLES/bootcmdutil_intermediates/bootcmdutil
+    fp=open(os.path.join(android_root,
+              "out","target","product","sapphire","obj","EXECUTABLES",
+              "bootcmdutil_intermediates","bootcmdutil"),
+              "rb")
+    common.ZipWriteStr(output_zip,"kernel/bootcmdutil",fp.read())
+    fp.close()
     
     #add eddify
     script.ShowProgress(0.2, 0)
@@ -195,7 +204,23 @@ else
                              "/system/lib/modules/modules.sqf");
     endif;
 endif;
-## TODO ADD AUTO CUSTOM-MTD logic to /tmp/boot.img here ##
+
+#add the cMTD Command line if needed
+if file_getprop("/tmp/nfo.prop","custommtd") == "CustomMTD"
+then
+    #extract recovery's command line option (thanks to Firerat)
+    run_program("/sbin/sh","-c",
+        "echo mtdparts`cat /proc/cmdline|awk -Fmtdparts '{print $2}'` >> /tmp/nfo.prop"
+        );
+    package_extract_file("kernel/bootcmdutil","/tmp/bootcmdutil");
+    set_perm(0,0,755,"/tmp/bootcmdutil");
+    ui_print("Applying cMTD to boot.img");
+    run_program("/tmp/bootcmdutil","append","/tmp/boot.img",
+                concat("mtdparts=",file_getprop("/tmp/nfo.prop","mtdparts"))
+               );
+    delete("/tmp/bootcmdutil");
+endif;
+
 ui_print("Write boot.img");
 assert(write_raw_image("/tmp/boot.img","boot"));
 delete("/tmp/checksys.sh","/tmp/boot.img");

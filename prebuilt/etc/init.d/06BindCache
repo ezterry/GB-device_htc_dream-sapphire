@@ -19,11 +19,29 @@ then
     exit
 fi
 busybox umount /cache
+
+#Do not mount to SD unless the user has allowed sd-ext to be used
+mountsd=0
+if [[ -e /data/property/persist.sys.magpie.allow ]];
+then
+    mountsd=`cat /data/property/persist.sys.magpie.allow`
+fi
+
 # Bind mount /sd-ext/cache ( or /system/sd/cache ) to /cache
 if [ "`busybox egrep -q "sd-ext|/system/sd" /proc/mounts;echo $?`" = "0" ];
 then
-    sdmount=`busybox egrep "sd-ext|/system/sd" /proc/mounts|busybox awk '{ print $2 }'`
-    cacheDir=${sdmount}/cache
+    sdmount=0
+    if [[ -e /data/property/persist.sys.magpie.allow ]];
+    then
+        sdmount=`cat /data/property/persist.sys.magpie.allow`
+    fi
+    if [ "$mountsd" == "0" ]
+    then
+        cacheDir=/data/cache
+    else
+        sdmount=`busybox egrep "sd-ext|/system/sd" /proc/mounts|busybox awk '{ print $2 }'`
+        cacheDir=${sdmount}/cache
+    fi
 else
     cacheDir=/data/cache
 fi
