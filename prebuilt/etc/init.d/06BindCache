@@ -1,0 +1,57 @@
+#!/system/bin/sh
+# 2010-08-05 Firerat, bind mount cache to sd ext partition, and mount mtdblock4 for Clockwork recovery's use
+
+# 2011-01-20 Firerat
+# check if we need to bind mount cache ( i.e. /cache has been shrunk with customMTD )
+# get cache size ( bytes ) from /proc/mtd
+CacheSizeBytes=$(printf %d `awk '/cache/ {print "0x"$2}' /proc/mtd`)
+if [ "$CacheSizeBytes" -gt "28311551" ];
+then
+    # 28311552 is 27mb ( cache size of 1.33.0013d )
+    # if it is less than that we assume customMTD has been used and cache is probably very small
+    # thus we need to run the rest of the script
+    # if not, just exit, but check before whether /cache/dalvik-cache exists
+    if [ ! -d /cache/dalvik-cache ];
+    then
+        busybox install -m 771 -o 1000 -g 1000 -d /cache/dalvik-cache
+    fi
+
+    exit
+fi
+busybox umount /cache
+# Bind mount /sd-ext/cache ( or /system/sd/cache ) to /cache
+if [ "`busybox egrep -q "sd-ext|/system/sd" /proc/mounts;echo $?`" = "0" ];
+then
+    sdmount=`busybox egrep "sd-ext|/system/sd" /proc/mounts|busybox awk '{ print $2 }'`
+    cacheDir=${sdmount}/cache
+else
+    cacheDir=/data/cache
+fi
+
+if [ ! -d $cacheDir ];
+then
+    busybox install -m 771 -o 1000 -g 2001 -d $cacheDir
+fi
+    busybox mount -o bind $cacheDir /cache
+if [ ! -d $cacheDir/dalvik-cache ];
+then
+    busybox install -m 771 -o 1000 -g 1000 -d $cacheDir/dalvik-cache
+fi
+
+if [ ! -d /dev/cache ];
+then
+    busybox install -d /dev/cache
+fi
+
+if [ "`grep -q \"/dev/cache\" /proc/mounts;echo $?`" != "0" ];
+then
+    busybox mount -t yaffs2 -o nosuid,nodev /dev/block/mtdblock4 /dev/cache
+fi
+if [ ! -d /dev/cache/recovery ];
+then
+    busybox install -m 770 -o 1000 -g 2001 -d /dev/cache/recovery
+fi
+if [ ! -L $cacheDir/recovery ];
+then
+    ln -s /dev/cache/recovery $cacheDir/recovery
+fi
