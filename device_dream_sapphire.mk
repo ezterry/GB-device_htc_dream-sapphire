@@ -79,6 +79,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # This is a 16.16 fixed point number
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.sf.hw=1 \
+    debug.sf.hw=1 \
     ro.opengles.version=65537
 
 # Set the vm heapsize to 18MB
