@@ -1,0 +1,19 @@
+#!/system/bin/sh
+#Service to update the kernel's KSM properties
+
+LOGINFO='log -p i -t update_ksm '
+
+ksmenable=`getprop persist.sys.ksmenable 0`
+
+$LOGINFO "Update KSM status"
+if [ "$ksmenable" == "1" ]
+then
+    $LOGINFO "Enable KSM (run=1)"
+    echo 4000 > /sys/kernel/mm/ksm/sleep_millisecs
+    echo 128 > /sys/kernel/mm/ksm/pages_to_scan
+    echo 1 > /sys/kernel/mm/ksm/run
+else
+    $LOGINFO "Disable KSM (run=0)"
+    echo 0 > /sys/kernel/mm/ksm/run
+fi
+$LOGINFO "KSM Update Done~~"
