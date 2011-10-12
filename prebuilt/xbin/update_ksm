@@ -10,7 +10,7 @@ if [ "$ksmenable" == "1" ]
 then
     $LOGINFO "Enable KSM (run=1)"
     echo 4000 > /sys/kernel/mm/ksm/sleep_millisecs
-    echo 128 > /sys/kernel/mm/ksm/pages_to_scan
+    echo 64 > /sys/kernel/mm/ksm/pages_to_scan
     echo 1 > /sys/kernel/mm/ksm/run
 else
     $LOGINFO "Disable KSM (run=0)"
