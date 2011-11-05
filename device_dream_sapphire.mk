@@ -39,6 +39,7 @@ PRODUCT_COPY_FILES += \
     device/htc/dream-sapphire/prebuilt/etc/init.d/05mountsd:system/etc/init.d/05mountsd \
     device/htc/dream-sapphire/prebuilt/etc/init.d/06BindCache:system/etc/init.d/06BindCache \
     device/htc/dream-sapphire/prebuilt/etc/init.d/10apps2sd:system/etc/init.d/10apps2sd \
+    device/htc/dream-sapphire/prebuilt/etc/init.d/11firstboot:system/etc/init.d/11firstboot \
     device/htc/dream-sapphire/prebuilt/etc/init.d/12zram_compcache:system/etc/init.d/12zram_compcache
 
 #Copy audio profiles
