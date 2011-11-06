@@ -5,12 +5,11 @@
 # check if we need to bind mount cache ( i.e. /cache has been shrunk with customMTD )
 # get cache size ( bytes ) from /proc/mtd
 CacheSizeBytes=$(printf %d `awk '/cache/ {print "0x"$2}' /proc/mtd`)
-if [ "$CacheSizeBytes" -gt "28311551" ];
+if [ "$CacheSizeBytes" -gt "40894464" ];
 then
-    # 28311552 is 27mb ( cache size of 1.33.0013d )
-    # if it is less than that we assume customMTD has been used and cache is probably very small
-    # thus we need to run the rest of the script
-    # if not, just exit, but check before whether /cache/dalvik-cache exists
+    # 40894464 is 40mb
+    # if it is less than that we assume need to at least move user's downloads
+    # to data
     if [ ! -d /cache/dalvik-cache ];
     then
         busybox install -m 771 -o 1000 -g 1000 -d /cache/dalvik-cache
@@ -51,9 +50,9 @@ then
     busybox install -m 771 -o 1000 -g 2001 -d $cacheDir
 fi
     busybox mount -o bind $cacheDir /cache
-if [ ! -d $cacheDir/dalvik-cache ];
+if [ -d $cacheDir/dalvik-cache ];
 then
-    busybox install -m 771 -o 1000 -g 1000 -d $cacheDir/dalvik-cache
+    rm -rf $cacheDir/dalvik-cache
 fi
 
 if [ ! -d /dev/cache ];
@@ -69,7 +68,15 @@ if [ ! -d /dev/cache/recovery ];
 then
     busybox install -m 770 -o 1000 -g 2001 -d /dev/cache/recovery
 fi
+if [ ! -d /dev/cache/dalvik-cache ];
+then
+    busybox install -m 771 -o 1000 -g 1000 -d /dev/cache/dalvik-cache
+fi
 if [ ! -L $cacheDir/recovery ];
 then
     ln -s /dev/cache/recovery $cacheDir/recovery
+fi
+if [ ! -L $cacheDir/dalvik-cache ];
+then
+    ln -s /dev/cache/dalvik-cache $cacheDir/dalvik-cache
 fi

@@ -1,14 +1,23 @@
 #!/system/bin/sh
 export PATH=/sbin:/data/local/bin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
 
-# check size of /cache for dexfiles (if 28MB+27MB free move dexcache):
+# check size of /cache for dexfiles (if > 17):
 df -h /cache | tail -n 1 | awk '
 {
+  odex=system("test -f /system/framework/core.odex");
   m=match($0,/([0-9]+\.[0-9])/);
-  if(substr($0,RSTART,RLENGTH-2) - 27 >28){
-    system("setprop dalvik.vm.dexopt-data-only 0");
+  if(odex == 0){
+    if(substr($0,RSTART,RLENGTH-2) - 17 >0){
+      system("setprop dalvik.vm.dexopt-data-only 0");
+    }else{
+      system("setprop dalvik.vm.dexopt-data-only 1");
+    }
   }else{
-    system("setprop dalvik.vm.dexopt-data-only 1");
+    if(substr($0,RSTART,RLENGTH-2) - 27 >28){
+      system("setprop dalvik.vm.dexopt-data-only 0");
+    }else{
+      system("setprop dalvik.vm.dexopt-data-only 1");
+    }
   }
 }'
 

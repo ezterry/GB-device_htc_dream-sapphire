@@ -27,6 +27,10 @@ then
             $LOG "$SD_EXT_DIRECTORY/$i created"
         fi
     done
+    #clear any /data/cache directory that my have become
+    #orphaned
+    busybox rm -rf /data/cache
+    #indicate magpie is active
     setprop magpie.a2sd.active 1
     $LOG "Apps2SD successfully activated"
 
