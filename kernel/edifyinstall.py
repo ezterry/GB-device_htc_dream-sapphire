@@ -91,6 +91,40 @@ echo "sysboard=$board" >> /tmp/nfo.prop
 """
     common.ZipWriteStr(output_zip,"checksys.sh",checksys)
 
+def generate_firstboot(output_zip):
+    firstboot = \
+"""#!/system/xbin/sh
+LOGINFO='log -p i -t firstboot '
+
+$LOGINFO "Firstboot: cleanup process"
+if [ -e /data/dalvik-cache ]
+then
+    $LOGINFO "Clear /data/dalvik-cache"
+    busybox rm -rf /data/dalvik-cache/*
+fi
+if [ -e /cache/dalvik-cache ]
+then
+    $LOGINFO "Clear /cache/dalvik-cache"
+    busybox rm -rf /cache/dalvik-cache/*
+fi
+if [ -e /sd-ext/dalvik-cache ]
+then
+    $LOGINFO "Clear /sd-ext/dalvik-cache"
+    busybox rm -rf /sd-ext/dalvik-cache/*
+fi
+if [ -e /data/tombstones ]
+then
+    $LOGINFO "Clear historic tombstones"
+    busybox rm -rf /data/tombstones/*
+fi
+if [ -e /data/data/com.android.vending/databases/market_assets.db ]
+then
+    $LOGINFO "Cleaning Market Superuser"
+    sqlite3 /data/data/com.android.vending/databases/market_assets.db "delete from asset_versions WHERE package='com.noshufou.android.su'"
+fi
+$LOGINFO "Firstboot cleanup done"
+"""
+    common.ZipWriteStr(output_zip,"firstboot.sh",firstboot)
 
 def make_boot_install(script,boot_img,input_zip,output_zip):
     android_root=os.getenv("ANDROID_BUILD_TOP")
@@ -146,6 +180,8 @@ def make_boot_install(script,boot_img,input_zip,output_zip):
 
     #add in checksys.sh
     generate_checksys(output_zip)
+    #add in firstboot.sh
+    generate_firstboot(output_zip)
 
     #add in bootcmdutil
     #out/target/product/sapphire/obj/EXECUTABLES/bootcmdutil_intermediates/bootcmdutil
@@ -264,6 +300,10 @@ run_program("/sbin/sh","-c","sleep 2; sync");
 #now update permissions on the new file and we are done
 set_perm(0, 0, 0644, "/system/etc/AudioPara4.csv");
 
+#For smoother updates we also now want a firstboot script
+mount("yaffs2", "MTD", "userdata", "/data");
+package_extract_file("firstboot.sh","/data/firstboot.sh");
+unmount("/data");
 """)
     #clean up temporary files
     shutil.rmtree(temp_root,ignore_errors=True)
