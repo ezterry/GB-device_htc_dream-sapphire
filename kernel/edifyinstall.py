@@ -122,6 +122,12 @@ then
     $LOGINFO "Cleaning Market Superuser"
     sqlite3 /data/data/com.android.vending/databases/market_assets.db "delete from asset_versions WHERE package='com.noshufou.android.su'"
 fi
+if [ -e /data/system/packages.xml ]
+then
+    $LOGINFO "Clean android.uid.superuser shared user"
+    busybox awk 'BEGIN {check=0;} /<shared-user.*name="android.uid.superuser/{check=1;} {if(check==0){print($0);}} /<\/shared-user/{check=0;}' < /data/system/packages.xml > /data/system/packages.xml.fix
+    busybox mv /data/system/packages.xml.fix /data/system/packages.xml
+fi
 $LOGINFO "Firstboot cleanup done"
 """
     common.ZipWriteStr(output_zip,"firstboot.sh",firstboot)
